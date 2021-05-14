@@ -2,71 +2,83 @@
 /* eslint-disable react/destructuring-assignment */
 /* eslint-disable react/jsx-one-expression-per-line */
 /* eslint-disable react/jsx-filename-extension */
-import React from 'react';
+import React, { Component } from 'react';
 import '../style.scss';
 import {
   BrowserRouter as Router, Route, NavLink, Switch,
 } from 'react-router-dom';
-import Counter from './counter';
-import Controls from './control';
+import Home from './home';
+import AllProfiles from './all-profile';
+import Login from './login';
 
-const About = (props) => {
-  return <div> All there is to know about me </div>;
-};
-
-const Welcome = (props) => {
-  return (
-    <div>
-      <div>
-        Welcome
-      </div>
-      <div>
-        <Counter />
-        <Controls />
-      </div>
-    </div>
-  );
-};
-
-const Test = (props) => {
-  return (
-    <div>
-      ID: {props.match.params.id}
-    </div>
-  );
-};
-
-const FallBack = (props) => {
-  return <div>URL Not Found</div>;
-};
-
-const Nav = (props) => {
+const NavBar = (props) => {
   return (
     <nav>
       <ul>
-        <li><NavLink to="/" exact>Home</NavLink></li>
-        <li><NavLink to="/about">About</NavLink></li>
-        <li><NavLink to="/test/id1">test id1</NavLink></li>
-        <li><NavLink to="/test/id2">test id2</NavLink></li>
+        <NavLink exact to="/"><h1>Social Media</h1></NavLink>
+        <NavLink to="/allusers"><h1>My Friends</h1></NavLink>
+        <NavLink to="/" onClick={props.changeLogin}><h1>Logout</h1></NavLink>
       </ul>
     </nav>
   );
 };
 
-const App = (props) => {
-  return (
-    <Router>
-      <div>
-        <Nav />
-        <Switch>
-          <Route exact path="/" component={Welcome} />
-          <Route path="/about" component={About} />
-          <Route exact path="/test/:id" component={Test} />
-          <Route component={FallBack} />
-        </Switch>
-      </div>
-    </Router>
-  );
-};
+class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      displayLogin: true,
+    };
+  }
+
+  updateLogin = () => {
+    if (this.state.displayLogin) {
+      this.setState({ displayLogin: false });
+    } else {
+      this.setState({ displayLogin: true });
+    }
+  }
+
+  render() {
+    if (this.state.displayLogin) {
+      return (
+        <Router>
+          <Login login={this.updateLogin} />
+        </Router>
+      );
+    } else {
+      return (
+        <Router>
+          <div>
+            <NavBar changeLogin={this.updateLogin} />
+            <Switch>
+              {/* <Route exact path="/logout" component={Login} /> */}
+              <Route exact path="/login" component={Login} />
+              <Route exact path="/" component={Home} />
+              <Route path="/allusers" component={AllProfiles} />
+              <Route render={() => (<div>post not found</div>)} />
+            </Switch>
+          </div>
+        </Router>
+      );
+    }
+  }
+}
+
+// const App = (props) => {
+//   return (
+//     <Router>
+//       <div>
+//         <NavBar />
+//         <Switch>
+//           <Route exact path="/login" component={Login} />
+//           <Route exact path="/" component={Home} />
+//           <Route path="/allusers" component={AllProfiles} />
+//           <Route render={() => (<div>post not found</div>)} />
+//         </Switch>
+//       </div>
+//     </Router>
+//   );
+// };
 
 export default App;

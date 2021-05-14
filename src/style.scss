@@ -21,6 +21,25 @@ body, html {
 	}
 }
 
+.post-container {
+	box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+	transition: 0.3s;
+	background-color: white;
+	margin: 10px;
+	filter: brightness(0.4);
+	border-radius: 5px;
+}
+
+.posts-section {
+	display: flex;
+	flex-direction: column;
+}
+
+.home-layout {
+	display: flex;
+	flex-direction: row;
+}
+
 .logo {
     width: 100px;
     height: 100px;
@@ -30,4 +49,43 @@ body, html {
 
 .active {
     color: pink;
+}
+
+nav {
+	position: relative;
+	background-color: white;
+	top: 0;
+	left: 0;
+	right: 0;
+	margin-bottom: 100px;
+	padding-left: 30px;
+	padding-right: 30px;
+}
+
+nav ul {
+	display: flex;
+	margin: 0;
+	width: 100%;
+	padding: 0;
+	justify-content: space-between;
+}
+
+.current-user-section {
+	display: flex;
+	flex-direction: column;
+}
+
+.current-user-section img {
+	width: 100px;
+	height: 100px;
+}
+
+.user-image img {
+	width: 400px;
+	height: 400px;
+}
+
+.modal-image {
+	width: 400px;
+	height: 400px;
 }

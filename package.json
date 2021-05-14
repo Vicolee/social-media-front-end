@@ -49,11 +49,19 @@
     "webpack-dev-server": "^3.11.2"
   },
   "dependencies": {
+    "axios": "^0.21.1",
     "jquery": "^3.6.0",
     "react": "^17.0.2",
+    "react-button": "^1.2.1",
     "react-dom": "^17.0.2",
+    "react-dropdown": "^1.9.2",
+    "react-dropdown-button": "^1.0.11",
+    "react-markdown": "^6.0.2",
+    "react-modal": "^3.13.1",
+    "react-npm-menu": "^1.5.0",
     "react-redux": "^7.2.4",
     "react-router-dom": "^5.2.0",
+    "react-textarea-autosize": "^8.3.2",
     "redux": "^4.1.0",
     "redux-thunk": "^2.3.0"
   }
