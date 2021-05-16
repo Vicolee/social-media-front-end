@@ -7,35 +7,18 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import ReactModal from 'react-modal';
+import {
+  faHome,
+  faMusic,
+  faShoePrints,
+} from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { fetchUsers, fetchUser } from '../actions';
 
 class AllProfiles extends Component {
   constructor(props) {
     super(props);
     this.state = {
-    //   name: 'Jasmine Mai',
-    //   year: '\'20',
-    //   picture: 'https://api.typeform.com/responses/files/1fbd3a5a0c7c84062b88ee2c6af2dff06af0edc30e316b0086c1389fff2faf4a/IMG_5087.jpg',
-    //   gender: 'Female',
-    //   'American Indian or Alaska Native': '',
-    //   Asian: 'Asian',
-    //   'Black or African American': '',
-    //   'Hispanic or Latino': '',
-    //   'Middle Eastern': '',
-    //   'Native Hawaiian or Other Pacific Islander': '',
-    //   White: '',
-    //   Other: '',
-    //   major: 'Computer Science',
-    //   minor: '',
-    //   modification: 'Digital Arts',
-    //   birthday: '5/2/98',
-    //   role: 'Developer',
-    //   home: 'San Francisco, CA',
-    //   quote: '"Adventure is out there!" - Up',
-    //   favoriteShoe: 'Running shoes',
-    //   favoriteArtist: 'Ariana Grande',
-    //   favoriteColor: 'Blue',
-    //   phoneType: 'iOS',
       usersModal: [],
     };
   }
@@ -71,8 +54,8 @@ class AllProfiles extends Component {
   displayUser = (user, id) => {
     return (
       <div className="user-container">
-        <div onClick={() => { this.handleOpenModal(id); }} role="button" tabIndex="0">
-          <div>{user.name}</div>
+        <div onClick={() => { this.handleOpenModal(id); }} role="button" tabIndex="0" className="all-users">
+          <div className="user-name">{user.name}</div>
           <div className="user-image"><img src={user.picture} alt="user profile" /></div>
         </div>
         <ReactModal
@@ -84,18 +67,26 @@ class AllProfiles extends Component {
           ariaHideApp={false}
         >
           <div>
-            <div>{user.quote}</div>
-            <div>
-              <img src={user.picture} alt="" className="modal-image" />
-              <div>
-                Shoe Icon:
-                {user.favoriteShoe}
-                Music Icon:
-                {user.favoriteArtist}
-                Favorite Color:
-                {user.favoriteColor}
+            <div id="user-modal-quote">{user.quote}</div>
+            <div id="user-modal-content-container">
+              <div id="user-modal-image-content">
+                <img src={user.picture} alt="" className="modal-image" />
+                <div>
+                  <div id="user-modal-shoe">
+                    <FontAwesomeIcon icon={faShoePrints} className="user-modal-icon" />
+                    {user.favoriteShoe}
+                  </div>
+                  <div id="user-modal-music">
+                    <FontAwesomeIcon icon={faMusic} className="user-modal-icon" />
+                    {user.favoriteArtist}
+                  </div>
+                  <div id="user-modal-m">
+                    Favorite Color:
+                    {user.favoriteColor}
+                  </div>
+                </div>
               </div>
-              <div>
+              <div id="user-modal-detail-content">
                 <div>
                   Name:
                   {user.name}
@@ -117,12 +108,12 @@ class AllProfiles extends Component {
                   {user.major}
                 </div>
                 <div>
-                  Role Icon:
+                  Role:
                   {user.role}
                 </div>
                 <div>
-                  Home Icon:
-                  {user.home}
+                  <FontAwesomeIcon icon={faHome} className="user-modal-icon" />
+                  <span>{user.home}</span>
                 </div>
               </div>
             </div>
@@ -134,9 +125,13 @@ class AllProfiles extends Component {
 
   displayAllUsers = (props) => {
     return (this.props.profiles.map((user, id) => {
-      return (
-        <div>{this.displayUser(user, id)}</div>
-      );
+      if (user.name !== this.props.current.name) {
+        return (
+          <div>{this.displayUser(user, id)}</div>
+        );
+      } else {
+        return null; // do not display logged in user.
+      }
     }));
   }
 
@@ -152,6 +147,7 @@ class AllProfiles extends Component {
 const mapStateToProps = (state) => (
   {
     profiles: state.profiles.all,
+    current: state.profiles.current,
   }
 );
 

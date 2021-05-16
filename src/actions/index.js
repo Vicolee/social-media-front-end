@@ -1,23 +1,30 @@
+/* eslint-disable no-prototype-builtins */
 /* eslint-disable prefer-destructuring */
 import axios from 'axios';
 
 // template posts
 const allPosts = [
   {
-    title: 'post 1',
+    title: 'Title 1',
     tags: 'tag 1',
     content: 'content 1',
     likes: [],
-    owner: 'John',
+    ownerId: '0',
   },
   {
-    title: 'post 2',
+    title: 'Title 2',
     tags: 'tag 2',
-    content: 'content 2',
+    content: 'content',
     likes: [],
-    owner: 'James',
+    ownerId: '0',
   },
 ];
+
+// store each users' list of posts ids according to userId
+const usersPosts = {
+  0: [0, 1],
+  50: [],
+};
 
 export const ActionTypes = {
   CREATE_POST: 'CREATE_POST',
@@ -26,20 +33,80 @@ export const ActionTypes = {
   FETCH_POST: 'FETCH_POST',
   FETCH_USERS: 'FETCH_USERS',
   FETCH_USER: 'FETCH_USER',
+  FETCH_USER_POSTS: 'FETCH_USERS_POSTS',
 };
 
-export function createPost(post) {
+export function createPost(userId, post) {
   allPosts.push(post);
+  console.log(`created post by ${post.ownerId}`);
   console.log(`all posts: ${allPosts}`);
+  // eslint-disable-next-line no-prototype-builtins
+  // if (!(usersPosts.hasOwnProperty(userId))) {
+  //   console.log('creating posts and clearing1');
+  //   usersPosts[userId] = [];
+  // }
+  // // if (!(Object.keys(usersPosts).includes(userId))) { // if user has never posted before, created empty list
+  // //   console.log('creating posts and clearing');
+  // // }
+  // usersPosts[userId].push(allPosts.length - 1); // push latest post's id created to user's posts lists
+  // console.log(`pushed user post: ${usersPosts[userId]}`);
   return {
     type: ActionTypes.FETCH_POSTS,
     payload: { allPosts },
   };
 }
 
-// export const fetchPosts = (payload) => async (dispatch) => {
-//   dispatch({ type: ActionTypes.FETCH_POSTS, payload: { allPosts } });
-// };
+export function updateUserPosts(userId) {
+  if (!(usersPosts.hasOwnProperty(userId))) {
+    console.log(`updating users posts with user id ${userId}`);
+    usersPosts[userId] = [];
+    console.log(`update user posts ${Object.keys(usersPosts)}`);
+    // usersPosts.push({
+    //   key: userId,
+    //   value: [],
+    // });
+  }
+  // if (!(Object.keys(usersPosts).includes(userId))) { // if user has never posted before, created empty list
+  //   console.log('creating posts and clearing');
+  // }
+  usersPosts[userId].push(allPosts.length - 1); // push latest post's id created to user's posts lists
+  console.log(`pushed user post: ${usersPosts[userId]}`);
+  // const userPosts = usersPosts.userId;
+  console.log(`userPosts after updating: ${usersPosts[userId]}`);
+  return {
+    type: ActionTypes.FETCH_USER_POSTS,
+    payload: { usersPosts },
+  };
+}
+
+// export function fetchUserPosts(userId) {
+//   console.log(userId);
+//   console.log(`logging ${usersPosts[userId]}`);
+//   // eslint-disable-next-line no-prototype-builtins
+//   if (!(usersPosts.hasOwnProperty(userId))) {
+//     usersPosts[userId] = [];
+//     console.log('creating usersposts');
+//   }
+//   const userPosts = usersPosts[userId];
+//   console.log(`fetch user posts id: ${userPosts}`);
+//   return {
+//     type: ActionTypes.FETCH_USER_POSTS,
+//     payload: { userPosts },
+//   };
+// }
+
+export function fetchUsersPosts() {
+  console.log(`logging ${usersPosts}`);
+  // eslint-disable-next-line no-prototype-builtins
+  // if (!(usersPosts.hasOwnProperty(userId))) {
+  //   usersPosts[userId] = [];
+  //   console.log('creating usersposts');
+  // }
+  return {
+    type: ActionTypes.FETCH_USER_POSTS,
+    payload: { usersPosts },
+  };
+}
 
 export function fetchPosts() {
   return (dispatch) => {
@@ -55,9 +122,10 @@ export function fetchPost(postId) {
 }
 
 export function likePost(userId, postId) {
-  if (!allPosts[postId].likes.includes(userId)) {
+  if (!allPosts[postId].likes.includes(userId)) { // if user has not like the post, add userId
     allPosts[postId].likes.push(userId);
-    console.log(`pushed: ${userId}, ${allPosts[postId].likes}`);
+  } else { // if user already liked the post, remove user from like list
+    allPosts[postId].likes.splice(allPosts[postId].likes.indexOf(userId));
   }
   return {
     type: ActionTypes.FETCH_POSTS,

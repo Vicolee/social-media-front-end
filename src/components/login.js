@@ -17,7 +17,7 @@ class Login extends Component {
     super(props);
     this.state = {
       options: [],
-    //   currentName: '',
+      validUser: true,
     };
   }
 
@@ -27,13 +27,9 @@ class Login extends Component {
 
   getOptions = (props) => {
     const options = [];
-    // console.log('getting options');
-    // console.log(`users: ${this.props.profiles}`);
-
     let i;
     // eslint-disable-next-line no-plusplus
     for (i = 0; i < this.props.profiles.length; i++) {
-    //   console.log(`hello: ${this.props.profiles[i].name}`);
       options.push(this.props.profiles[i].name);
     }
     console.log(options);
@@ -41,11 +37,13 @@ class Login extends Component {
   }
 
   login = (name) => {
-    console.log(name);
-    const id = this.findUserId(name);
-    // console.log(`user id found: ${id}`);
-    this.props.fetchUser(id);
-    this.props.login();
+    if (name === 'Select User') {
+      this.setState({ validUser: false });
+    } else {
+      const id = this.findUserId(name);
+      this.props.fetchUser(id);
+      this.props.login();
+    }
   }
 
   findUserId = (name) => {
@@ -60,22 +58,50 @@ class Login extends Component {
   }
 
   render() {
-    return (
-      <div>
-        <div>Select User To Login As:</div>
-        <div onClick={this.getOptions} type="button">
-          <Dropdown
-            // onClick={() => { this.setState({ currentName: this._onSelect }); }}
-            options={this.state.options}
-            onChange={this._onSelect}
-            value={this.state.options[0]}
-            placeholder="Select an option"
-            className="dropdown"
-          />
+    if (this.state.validUser) {
+      return (
+        <div className="login-page">
+          <div className="login-container">
+            <div>Select User To Login As:</div>
+            <div onClick={this.getOptions} type="button" id="select-user">
+              <Dropdown
+              // onClick={() => { this.setState({ currentName: this._onSelect }); }}
+                options={this.state.options}
+                onChange={this._onSelect}
+                value={null}
+                placeholder="Select User"
+                className="dropdown"
+              />
+            </div>
+            <button type="button" onClick={() => { this.login($('.Dropdown-placeholder').text()); }}>Login</button>
+          </div>
+
         </div>
-        <button type="button" onClick={() => { this.login($('.Dropdown-placeholder').text()); }}>Login</button>
-      </div>
-    );
+      );
+    } else {
+      return (
+        <div className="login-page">
+          <div className="login-container">
+            <div>Select User To Login As:</div>
+            <div onClick={this.getOptions} type="button">
+              <Dropdown
+              // onClick={() => { this.setState({ currentName: this._onSelect }); }}
+                options={this.state.options}
+                onChange={this._onSelect}
+                value={null}
+                placeholder="Select User"
+                className="dropdown"
+                fluid
+                multiple
+              />
+            </div>
+            <div>Invalid User! Retry!</div>
+            <button type="button" onClick={() => { this.login($('.Dropdown-placeholder').text()); }}>Login</button>
+          </div>
+
+        </div>
+      );
+    }
   }
 }
 

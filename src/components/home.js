@@ -4,11 +4,20 @@
 /* eslint-disable react/jsx-filename-extension */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
+import {
+  withRouter,
+  BrowserRouter as NavLink, Link,
+} from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import TextareaAutosize from 'react-textarea-autosize';
+
 import {
-  fetchPosts, likePost, createPost, fetchUsers,
+  faThumbsUp,
+} from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
+import {
+  fetchPosts, likePost, createPost, fetchUsers, updateUserPosts,
 } from '../actions';
 
 class Home extends Component {
@@ -20,6 +29,7 @@ class Home extends Component {
         tags: '',
         content: '',
         likes: [],
+        ownerId: '',
       },
     };
   }
@@ -29,24 +39,10 @@ class Home extends Component {
     this.props.fetchUsers();
   }
 
-  displayAllPosts = (props) => {
-    return (this.props.posts.map((post, id) => {
-      return (
-        <div className="post-container">
-          <div>{post.title}</div>
-          <div>{post.tags}</div>
-          <ReactMarkdown>{post.content || ''}</ReactMarkdown>
-          <button onClick={() => { this.like(id); }} type="button">{post.likes.length}</button>
-        </div>
-      );
-    }));
-  }
-
   like = (postId) => {
     const userId = this.findUserId(this.props.currentUser.name);
     this.props.likePost(userId, postId);
     this.props.history.push('/');
-    console.log(this.props.posts[0].likes);
   }
 
   onTitleChange = (event) => {
@@ -61,6 +57,10 @@ class Home extends Component {
     }));
   }
 
+  // toggleThumbsColor = (postId) => {
+  //   if (this.props.posts.postId)
+  // }
+
   onContentChange = (event) => {
     this.setState((prevState) => ({
       post: { ...prevState.post, content: event.target.value },
@@ -68,7 +68,6 @@ class Home extends Component {
   }
 
   findUserId = (name) => {
-    console.log(this.props.profiles.length);
     for (let i = 0; i < this.props.profiles.length; i++) {
       if (name === this.props.profiles[i].name) {
         return i;
@@ -78,7 +77,9 @@ class Home extends Component {
   }
 
   uploadPost = () => {
-    this.props.createPost(this.state.post);
+    const postOwnerId = this.findUserId(this.props.currentUser.name);
+    this.props.createPost(this.findUserId(this.props.currentUser.name), { ...this.state.post, ownerId: postOwnerId });
+    this.props.updateUserPosts(this.findUserId(this.props.currentUser.name));
     this.props.history.push('/');
     this.setState({
       post: {
@@ -86,15 +87,57 @@ class Home extends Component {
         tags: '',
         content: '',
         likes: [],
+        ownerId: '',
       },
     });
   }
 
-  displayCreatePost = (props) => {
+  displayPostOwner = (ownerId) => {
+    const user = this.props.profiles[ownerId];
     return (
       <div>
         <div>
-          <input onChange={this.onTitleChange} value={this.state.post.title} placeholder="Title" />
+          <div className="post-owner-profile">
+            <img src={user.picture} alt="" className="small-user-picture" />
+            <Link exact to={`allusers/${ownerId}`} onClick={() => { console.log('navlink'); }}>
+              <div className="post-owner-profile-text">
+                <p id="post-user-name">{user.name}</p>
+                <p>{user.major}</p>
+                <p>{user.role}</p>
+              </div>
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  displayAllPosts = (props) => {
+    return (this.props.posts.map((post, id) => {
+      return (
+        <div className="post-container">
+          <div>
+            {this.displayPostOwner(post.ownerId)}
+          </div>
+          <div className="post-container-content">
+            <div className="post-title">{post.title}</div>
+            <div className="post-tags">{post.tags}</div>
+            <ReactMarkdown className="post-content">{post.content || ''}</ReactMarkdown>
+          </div>
+          <div className="post-container-likes">
+            <FontAwesomeIcon onClick={() => { this.like(id); }} icon={faThumbsUp} id="post-container-likes-thumbs" />
+            <p>{post.likes.length}</p>
+          </div>
+        </div>
+      );
+    }));
+  }
+
+  displayCreatePost = (props) => {
+    return (
+      <div className="create-post-container">
+        <div>
+          <input onChange={this.onTitleChange} value={this.state.post.title} placeholder="Title" id="create-post-title" />
         </div>
         <div>
           <TextareaAutosize
@@ -103,12 +146,12 @@ class Home extends Component {
             onChange={this.onContentChange}
             minRows="15"
             maxRows="15"
-            className="text-box"
+            className="create-post-content"
             placeholder="Description: Supports Markdown!"
           />
         </div>
         <div>
-          <input onChange={this.onTagsChange} value={this.state.post.tags} placeholder="Tags" />
+          <input onChange={this.onTagsChange} value={this.state.post.tags} placeholder="Tags" id="create-post-tags" />
         </div>
         <button onClick={this.uploadPost} type="button">Submit</button>
       </div>
@@ -116,26 +159,38 @@ class Home extends Component {
   }
 
   displayProfile = (props) => {
+    const userID = this.findUserId(this.props.currentUser.name);
     return (
-      <div className="current-user-section">
-        <div><img src={this.props.currentUser.picture} alt="user profile" /></div>
-        <div>{this.props.currentUser.name}</div>
-        <div>{this.props.currentUser.role}</div>
+      <div>
+        <NavLink exact to={`/allusers/${userID}`} onClick={() => { console.log('123'); }} className="navlink">
+          <div className="current-user-section">
+            <div>
+              <div><img src={this.props.currentUser.picture} alt="user profile" /></div>
+              <div className="current-user-section-text">
+                <p id="user-section-name">{this.props.currentUser.name}</p>
+                <p id="user-section-role">{this.props.currentUser.role}</p>
+              </div>
+
+            </div>
+          </div>
+        </NavLink>
       </div>
+
     );
   }
 
   render() {
     return (
       <div className="home-layout">
-        <div>
+        <div className="home-user-profile">
           {this.displayProfile()}
         </div>
         <div className="posts-section">
           {this.displayCreatePost()}
-          {this.displayAllPosts()}
+          <div className="display-posts-section">
+            {this.displayAllPosts()}
+          </div>
         </div>
-
       </div>
     );
   }
@@ -146,9 +201,10 @@ const mapStateToProps = (state) => (
     posts: state.posts.all,
     currentUser: state.profiles.current,
     profiles: state.profiles.all,
+    userPosts: state.profiles.userPosts,
   }
 );
 
 export default withRouter(connect(mapStateToProps, {
-  fetchPosts, likePost, createPost, fetchUsers,
+  fetchPosts, likePost, createPost, fetchUsers, updateUserPosts,
 })(Home));
