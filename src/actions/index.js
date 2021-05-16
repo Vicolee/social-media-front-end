@@ -38,18 +38,6 @@ export const ActionTypes = {
 
 export function createPost(userId, post) {
   allPosts.push(post);
-  console.log(`created post by ${post.ownerId}`);
-  console.log(`all posts: ${allPosts}`);
-  // eslint-disable-next-line no-prototype-builtins
-  // if (!(usersPosts.hasOwnProperty(userId))) {
-  //   console.log('creating posts and clearing1');
-  //   usersPosts[userId] = [];
-  // }
-  // // if (!(Object.keys(usersPosts).includes(userId))) { // if user has never posted before, created empty list
-  // //   console.log('creating posts and clearing');
-  // // }
-  // usersPosts[userId].push(allPosts.length - 1); // push latest post's id created to user's posts lists
-  // console.log(`pushed user post: ${usersPosts[userId]}`);
   return {
     type: ActionTypes.FETCH_POSTS,
     payload: { allPosts },
@@ -58,50 +46,16 @@ export function createPost(userId, post) {
 
 export function updateUserPosts(userId) {
   if (!(usersPosts.hasOwnProperty(userId))) {
-    console.log(`updating users posts with user id ${userId}`);
     usersPosts[userId] = [];
-    console.log(`update user posts ${Object.keys(usersPosts)}`);
-    // usersPosts.push({
-    //   key: userId,
-    //   value: [],
-    // });
   }
-  // if (!(Object.keys(usersPosts).includes(userId))) { // if user has never posted before, created empty list
-  //   console.log('creating posts and clearing');
-  // }
   usersPosts[userId].push(allPosts.length - 1); // push latest post's id created to user's posts lists
-  console.log(`pushed user post: ${usersPosts[userId]}`);
-  // const userPosts = usersPosts.userId;
-  console.log(`userPosts after updating: ${usersPosts[userId]}`);
   return {
     type: ActionTypes.FETCH_USER_POSTS,
     payload: { usersPosts },
   };
 }
 
-// export function fetchUserPosts(userId) {
-//   console.log(userId);
-//   console.log(`logging ${usersPosts[userId]}`);
-//   // eslint-disable-next-line no-prototype-builtins
-//   if (!(usersPosts.hasOwnProperty(userId))) {
-//     usersPosts[userId] = [];
-//     console.log('creating usersposts');
-//   }
-//   const userPosts = usersPosts[userId];
-//   console.log(`fetch user posts id: ${userPosts}`);
-//   return {
-//     type: ActionTypes.FETCH_USER_POSTS,
-//     payload: { userPosts },
-//   };
-// }
-
 export function fetchUsersPosts() {
-  console.log(`logging ${usersPosts}`);
-  // eslint-disable-next-line no-prototype-builtins
-  // if (!(usersPosts.hasOwnProperty(userId))) {
-  //   usersPosts[userId] = [];
-  //   console.log('creating usersposts');
-  // }
   return {
     type: ActionTypes.FETCH_USER_POSTS,
     payload: { usersPosts },
@@ -139,7 +93,6 @@ export function fetchUsers() {
     axios.get('https://raw.githubusercontent.com/dali-lab/dali-challenges/master/data/DALI_Data.json').then((response) => {
       results = response.data;
       dispatch({ type: ActionTypes.FETCH_USERS, payload: { results } });
-      console.log(results);
     }).catch((error) => {
       console.log('fetch users does not work');
     });
@@ -152,7 +105,6 @@ export function fetchUser(userId) {
     let results = [];
     axios.get('https://raw.githubusercontent.com/dali-lab/dali-challenges/master/data/DALI_Data.json').then((response) => {
       results = response.data[userId];
-      console.log(`getting user ${results.name}`);
       dispatch({ type: ActionTypes.FETCH_USER, payload: { results } });
     }).catch((error) => {
       console.log('fetch user does not work');

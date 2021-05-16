@@ -453,6 +453,7 @@ nav ul div {
 
 #select-user {
 	border-style: solid;
+	width: 150px;
 }
 
 #select-user:hover {
@@ -466,5 +467,17 @@ nav ul div {
 	padding-right: 20px;
 	padding-top: 10px;
 	padding-bottom: 10px;
-	// overflow: scroll;
+}
+
+button {
+	border-style: solid;
+	background-color: white;
+	width: 100px;
+	padding: 10px;
+	border-radius: 10px;
+}
+
+button:hover {
+	filter: brightness(0.8);
+	transition: 0.3s;
 }

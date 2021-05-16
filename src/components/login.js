@@ -7,9 +7,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import Dropdown from 'react-dropdown';
-// import DropdownButton from 'react-dropdown-button';
-import $ from 'jquery';
+import Select from 'react-select';
 import { fetchUser, fetchUsers } from '../actions';
 
 class Login extends Component {
@@ -18,6 +16,7 @@ class Login extends Component {
     this.state = {
       options: [],
       validUser: true,
+      selectedOption: '',
     };
   }
 
@@ -30,14 +29,17 @@ class Login extends Component {
     let i;
     // eslint-disable-next-line no-plusplus
     for (i = 0; i < this.props.profiles.length; i++) {
-      options.push(this.props.profiles[i].name);
+      const newDict = {};
+      newDict.value = this.props.profiles[i].name;
+      newDict.label = this.props.profiles[i].name;
+      options.push(newDict);
     }
-    console.log(options);
     this.setState({ options });
   }
 
   login = (name) => {
-    if (name === 'Select User') {
+    console.log(`name ${name}`);
+    if (name === undefined) {
       this.setState({ validUser: false });
     } else {
       const id = this.findUserId(name);
@@ -49,12 +51,15 @@ class Login extends Component {
   findUserId = (name) => {
     console.log(this.props.profiles.length);
     for (let i = 0; i < this.props.profiles.length; i++) {
-    //   console.log(`checking user: ${this.props.profiles[i].name}`);
       if (name === this.props.profiles[i].name) {
         return i;
       }
     }
     return 0; // return first user by default if cannot find the user in the list
+  }
+
+  handleChange = (selectedOption) => {
+    this.setState({ selectedOption });
   }
 
   render() {
@@ -64,16 +69,14 @@ class Login extends Component {
           <div className="login-container">
             <div>Select User To Login As:</div>
             <div onClick={this.getOptions} type="button" id="select-user">
-              <Dropdown
-              // onClick={() => { this.setState({ currentName: this._onSelect }); }}
+              <Select
                 options={this.state.options}
-                onChange={this._onSelect}
-                value={null}
+                onChange={this.handleChange}
+                defaultValue={null}
                 placeholder="Select User"
-                className="dropdown"
               />
             </div>
-            <button type="button" onClick={() => { this.login($('.Dropdown-placeholder').text()); }}>Login</button>
+            <button type="button" onClick={() => { this.login(this.state.selectedOption.value); }}>Login</button>
           </div>
 
         </div>
@@ -83,20 +86,16 @@ class Login extends Component {
         <div className="login-page">
           <div className="login-container">
             <div>Select User To Login As:</div>
-            <div onClick={this.getOptions} type="button">
-              <Dropdown
-              // onClick={() => { this.setState({ currentName: this._onSelect }); }}
+            <div onClick={this.getOptions} type="button" id="select-user">
+              <Select
                 options={this.state.options}
-                onChange={this._onSelect}
-                value={null}
+                onChange={this.handleChange}
+                defaultValue={null}
                 placeholder="Select User"
-                className="dropdown"
-                fluid
-                multiple
               />
             </div>
             <div>Invalid User! Retry!</div>
-            <button type="button" onClick={() => { this.login($('.Dropdown-placeholder').text()); }}>Login</button>
+            <button type="button" onClick={() => { this.login(this.state.selectedOption.value); }}>Login</button>
           </div>
 
         </div>

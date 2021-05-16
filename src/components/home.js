@@ -57,10 +57,6 @@ class Home extends Component {
     }));
   }
 
-  // toggleThumbsColor = (postId) => {
-  //   if (this.props.posts.postId)
-  // }
-
   onContentChange = (event) => {
     this.setState((prevState) => ({
       post: { ...prevState.post, content: event.target.value },
