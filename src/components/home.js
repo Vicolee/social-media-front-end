@@ -161,7 +161,7 @@ class Home extends Component {
         <NavLink exact to={`/allusers/${userID}`} onClick={() => { console.log('123'); }} className="navlink">
           <div className="current-user-section">
             <div>
-              <div><img src={this.props.currentUser.picture} alt="user profile" /></div>
+              <div className="current-user-section-img"><img src={this.props.currentUser.picture} alt="user profile" /></div>
               <div className="current-user-section-text">
                 <p id="user-section-name">{this.props.currentUser.name}</p>
                 <p id="user-section-role">{this.props.currentUser.role}</p>
