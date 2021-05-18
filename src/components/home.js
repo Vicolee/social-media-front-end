@@ -6,7 +6,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import {
   withRouter,
-  BrowserRouter as NavLink, Link,
+  NavLink, Link,
 } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import TextareaAutosize from 'react-textarea-autosize';
